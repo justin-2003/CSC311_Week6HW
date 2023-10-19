@@ -1,6 +1,8 @@
 package com.example.csc311_week6hw.db;
 
 import com.example.csc311_week6hw.Person;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,19 +10,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-
-/**
- *
- * @author MoaathAlrajab
- */
 public class ConnDbOps {
+
+    // variables for the database
     final String MYSQL_SERVER_URL = "jdbc:mysql://cscs311coursesamj03.mariadb.database.azure.com";
-    final String DB_URL = "jdbc:mysql://cscs311coursesamj03.mariadb.database.azure.com/sfsdf3434";
+    final String DB_URL = "jdbc:mysql://cscs311coursesamj03.mariadb.database.azure.com/asdfas32";
     final String USERNAME = "justin03@cscs311coursesamj03";
     final String PASSWORD = "#Nitsuj03";
 
-
+  // method to connect to the database
     public  boolean connectToDatabase() {
         boolean hasRegistredUsers = false;
 
@@ -33,7 +31,7 @@ public class ConnDbOps {
             //First, connect to MYSQL server and create the datab ase if not created
             Connection conn = DriverManager.getConnection(MYSQL_SERVER_URL, USERNAME, PASSWORD);
             Statement statement = conn.createStatement();
-            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS sfsdf3434");
+            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS asdfas32");
             statement.close();
             conn.close();
 
@@ -72,6 +70,7 @@ public class ConnDbOps {
         return hasRegistredUsers;
     }
 
+    //Search a name from the database
     public  void queryUserByName(String name) {
 
 
@@ -98,6 +97,8 @@ public class ConnDbOps {
         }
     }
 
+
+    //lists all the users from the database
     public  void listAllUsers() {
 
 
@@ -124,6 +125,7 @@ public class ConnDbOps {
         }
     }
 
+    //inserts user to the database
     public  void insertUser(Person p) {
 
 
@@ -133,7 +135,7 @@ public class ConnDbOps {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, p.getName());
             preparedStatement.setString(2, p.getEmail());
-            preparedStatement.setString(3, p.getNumber());
+            preparedStatement.setString(3, p.getPhone());
             preparedStatement.setString(4, p.getAddress());
             preparedStatement.setInt(5, p.getSalary());
             preparedStatement.setString(6, p.getPassword());
@@ -142,6 +144,59 @@ public class ConnDbOps {
 
             if (row > 0) {
                 System.out.println("A new user was inserted successfully.");
+            }
+
+            preparedStatement.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //gets all the users from the database and gets it's on the tableview
+    public ObservableList<Person> getAllUsersFromDatabase() throws ClassNotFoundException, SQLException {
+        ObservableList<Person> data = FXCollections.observableArrayList();
+
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            String sql = "SELECT * FROM users";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String phone = resultSet.getString("phone");
+                String address = resultSet.getString("address");
+                int salary = resultSet.getInt("salary");
+                String password = resultSet.getString("password");
+
+                data.add(new Person(name, email, phone, address, salary, password));
+            }
+
+            preparedStatement.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return data;
+    }
+
+    // deletes a user from the database
+    public void deleteUser(String email) {
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            String sql = "DELETE FROM users WHERE email = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+
+            int row = preparedStatement.executeUpdate();
+
+            if(row > 0){
+                System.out.println("Delete user successfully");
             }
 
             preparedStatement.close();

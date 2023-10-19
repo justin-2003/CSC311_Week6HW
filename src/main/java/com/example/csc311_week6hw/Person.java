@@ -2,32 +2,38 @@ package com.example.csc311_week6hw;
 
 public class Person {
 
+    //variables for the Person class
     private String name;
     private String email;
-    private String number;
+    private String phone;
     private String address;
     private String password;
     private int salary;
+    private int id;
 
 
+    // default constructor for Person
     public Person() {
+        this.setId(0);
         this.name = " ";
         this.email = " ";
-        this.number = " ";
+        this.phone = " ";
         this.address = " ";
         this.password = " ";
         this.salary = 0;
     }
 
-
-    public Person(String name, String email, String number, String address, int salary, String password) {
+    // Method to add a new Person to the database
+    public Person(String name, String email, String phone, String address, int salary, String password) {
         this.setName(name);
         this.setEmail(email);
-        this.setNumber(number);
+        this.setPhone(phone);
         this.setAddress(address);
         this.password = password;
         this.setSalary(salary);
     }
+
+
 
     // fix the getters and setters to match the fields
 
@@ -55,12 +61,12 @@ public class Person {
         this.email = email;
     }
 
-    public String getNumber() {
-        return number;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setPhone(String number) {
+        this.phone = number;
     }
 
     public String getAddress() {
@@ -75,8 +81,20 @@ public class Person {
         return password;
     }
 
+    /**
+     *
+     * @param password
+     */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
 
